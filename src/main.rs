@@ -1,43 +1,104 @@
-use std::ops::Mul;
-struct Triangle{
-    val_base : f64,
-    val_h : f64,
+trait Area {
+    fn area(&self) -> f64;
+}
+trait Volume {
+    fn volume(&self) -> f64;
+}
+struct Square<New> 
+{
+    s: New, //S means side of the square
 }
 
-impl Triangle{  //Constructeur
-    pub fn new(b : f64, h : f64) -> Triangle{
-        Triangle{val_base : b, val_h : h}
+struct Triangle<T=f64> {
+    base: T,
+    height: T
+}
+struct Pyramid<T, U> {
+    base : T,
+    height : U
+}
+
+impl Square<f64> {
+    fn new( t: f64) -> Self {
+        Square { s : t}
+    }
+}
+impl Area for Square<f64> {
+    fn area(&self) -> f64 {
+        self.s * self.s
+    }
+}
+impl Square<u32> {
+    fn new( t: u32) -> Self {
+        Square { s : t}
     }
 }
 
-struct Square <T>{
-    cote : T
-}
-
-impl<T> Square<T> {
-    pub fn new(c : T) -> Square<T> {
-        Square{cote : c}
+impl Area for Square<u32> {
+    fn area(&self) -> f64 {
+        (self.s * self.s).into()
     }
-
-    // pub fn area(& self) -> &T as Mul<&>>::Output {
-    //     self.cote*self.cote
-    // }
-}
-
-/* struct Pyramid <T>{
-    cote : T
 }
 
 
-impl<T> Pyramid<T> {
-    pub fn new(c : T) -> Pyramid<T> {
-        Pyramid{cote : c}
+impl Square<String> {
+    fn new( t: &str) -> Self {
+        let float : f64;
+        float = t.parse().unwrap();
+        Square { s : (float).to_string(),
     }
-}*/
+}
+}
+
+impl Area for Square<String> {
+    fn area(&self) -> f64 {
+        let tamp : f64 = self.s.parse().unwrap();
+        tamp*tamp
+    }
+}
+
+impl Triangle<f64> {
+    fn new( b: f64, h: f64) -> Self {
+        Triangle {base: b, height: h} 
+    }
+}
+
+impl Area for Triangle<f64> {
+    fn area(&self) -> f64 {
+        self.base * self.height / 2.0
+    }
+}
+
+impl Pyramid<Square<u32>, f64> {
+    fn new(new_base : Square<u32>, new_height : f64) -> Self {
+        Pyramid { base : new_base, height : new_height}
+    }
+}
+impl Volume for Pyramid<Square<u32>, f64> {
+    fn volume(&self) -> f64 {
+        self.base.area() * self.height / 3.0
+    }
+}
+impl Pyramid<Triangle<f64>, f64> {
+    fn new(new_base : Triangle<f64>, new_height : f64) -> Self {
+        Pyramid { base : new_base, height : new_height}
+    }
+}
+
+impl Volume for Pyramid<Triangle<f64>, f64> {
+    fn volume(&self) -> f64 {
+        self.base.area() * self.height / 3.0
+    }
+}
+
+
+
+
+
 fn main() {
     let square = Square::<u32>::new(5);
     let square_float = Square::<f64>::new(5.4);
-    let square_string = Square::<String>::new("6".to_string());
+    let square_string = Square::<String>::new("6");
 
     println!("square area is {}", square.area());
     println!("square_float area is {}", square_float.area());
